@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
     <script>
         tailwind.config = {
             theme: {
@@ -33,23 +34,6 @@
             }
         }
     </script>
-    <style>
-        .gradient-text {
-            background: linear-gradient(135deg, #4ade80 0%, #10b981 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .pricing-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-        }
-    </style>
 </head>
 <body class="font-sans text-gray-800 bg-gray-50 antialiased selection:bg-brand selection:text-white">
 
@@ -117,18 +101,6 @@
                 Wir sind die Brücke zwischen einer fairen Trennung im Unternehmen und einem erfolgreichen Neustart als Freelancer. Begleitung, Bürokratie-Übernahme und Platzierung am Markt – aus einer Hand.
             </p>
             
-            <div class="flex flex-col sm:flex-row gap-6 justify-center">
-                <!-- HR Button -->
-                <a href="#arbeitgeber" class="inline-flex justify-center items-center gap-3 bg-white text-navy-900 font-bold px-8 py-4 rounded-xl transition-all transform hover:-translate-y-1 shadow-xl hover:bg-gray-50">
-                    <i class="fas fa-building text-brand"></i>
-                    Für HR & Arbeitgeber
-                </a>
-                <!-- Employee Button -->
-                <a href="#mitarbeiter" class="inline-flex justify-center items-center gap-3 bg-brand hover:bg-brand-light text-navy-900 font-bold px-8 py-4 rounded-xl transition-all transform hover:-translate-y-1 shadow-lg shadow-brand/30">
-                    <i class="fas fa-user-tie"></i>
-                    Für Abgefundene
-                </a>
-            </div>
         </div>
     </section>
 
@@ -292,7 +264,7 @@
     </section>
 
     <section id="pakete" class="py-24 bg-navy-900 text-white relative">
-        <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 30px 30px;"></div>
+        <div class="absolute inset-0 opacity-5 dot-pattern-bg"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <h2 class="text-3xl md:text-4xl font-heading font-bold mb-4">Das 3-Stufen-Modell</h2>
@@ -484,7 +456,7 @@
 
     <section id="kontakt" class="py-24 relative overflow-hidden bg-gradient-to-br from-navy-900 to-navy-800">
         <!-- Background Pattern -->
-        <div class="absolute inset-0 opacity-5" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+        <div class="absolute inset-0 opacity-5 grid-pattern-bg"></div>
         
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             <h2 class="text-4xl md:text-5xl font-heading font-bold text-white mb-6">Lassen Sie uns über Outplacement 2.0 sprechen.</h2>
