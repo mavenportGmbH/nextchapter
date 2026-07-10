@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NextChapter | Outplacement 2.0 & Gründungsbegleitung</title>
+    <title>NextChapter | Strategische Outplacement-Ergänzung für HR</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
     <script>
         tailwind.config = {
             theme: {
@@ -34,469 +33,637 @@
             }
         }
     </script>
+    <style>
+        /* CSS für die Scroll-Animationen */
+        .timeline-item {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .timeline-item.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar Styling für die Experten-Leiste */
+        .expert-scroll-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .expert-scroll-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 9999px;
+        }
+        .expert-scroll-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        .expert-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
 </head>
 <body class="font-sans text-gray-800 bg-gray-50 antialiased selection:bg-brand selection:text-white">
 
-    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-md shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center text-white font-bold text-xl shadow-md">
-                        N
+    <!-- Passwort Schutz Overlay -->
+    <div id="password-overlay" class="fixed inset-0 z-[100] flex items-center justify-center bg-navy-900/60 backdrop-blur-sm px-4">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full border border-gray-100 text-center">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center text-white font-bold text-3xl shadow-md mx-auto mb-6">
+                N
+            </div>
+            <h2 class="text-2xl font-heading font-bold text-navy-900 mb-2">Geschützter Bereich</h2>
+            <p class="text-gray-600 text-sm mb-6">Bitte geben Sie das Passwort ein, um Zugriff auf die NextChapter-Inhalte zu erhalten.</p>
+            
+            <div class="space-y-4">
+                <input type="password" id="password-input" placeholder="Passwort eingeben" class="w-full px-5 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all text-center font-medium">
+                <p id="password-error" class="text-red-500 text-xs font-semibold hidden">Falsches Passwort. Bitte versuchen Sie es erneut.</p>
+                <button onclick="checkPassword()" class="w-full bg-navy-900 text-white font-bold py-3.5 rounded-xl hover:bg-navy-800 transition-colors shadow-lg">
+                    Freischalten
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hauptinhalt (Standardmäßig verwaschen und gesperrt) -->
+    <div id="page-content" class="blur-md pointer-events-none select-none transition-all duration-700">
+        
+        <!-- Navigation -->
+        <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-md shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-20">
+                    <!-- Logo -->
+                    <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center text-white font-bold text-xl shadow-md">
+                            N
+                        </div>
+                        <span class="font-heading font-bold text-2xl text-navy-900 tracking-tight">NextChapter</span>
                     </div>
-                    <span class="font-heading font-bold text-2xl text-navy-900 tracking-tight">NextChapter</span>
+                    
+                    <!-- Desktop Menu -->
+                    <div class="hidden lg:flex space-x-6 items-center text-sm">
+                        <a href="#warum-selbstaendigkeit" class="text-gray-600 hover:text-brand font-medium transition-colors">Das Markt-Dilemma</a>
+                        <a href="#inkubator-konzept" class="text-gray-600 hover:text-brand font-medium transition-colors">Das Konzept</a>
+                        <a href="#coaches" class="text-gray-600 hover:text-brand font-medium transition-colors">Experten</a>
+                        <a href="#b2b-modelle" class="text-gray-600 hover:text-brand font-medium transition-colors">Pakete</a>
+                        <a href="#expertise" class="text-gray-600 hover:text-brand font-medium transition-colors">Über uns</a>
+                        <a href="#kontakt" class="bg-navy-900 text-white px-5 py-2.5 rounded-full font-medium hover:bg-navy-800 transition-all transform hover:-translate-y-0.5 shadow-lg shadow-navy-900/20">
+                            HR-Strategiegespräch buchen
+                        </a>
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <div class="lg:hidden flex items-center">
+                        <button id="mobile-menu-btn" class="text-gray-600 hover:text-navy-900 focus:outline-none">
+                            <i class="fas fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu Dropdown -->
+            <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl">
+                <div class="px-4 pt-2 pb-6 space-y-2">
+                    <a href="#warum-selbstaendigkeit" class="block px-3 py-3 text-gray-700 font-medium hover:bg-gray-50 rounded-lg">Das Markt-Dilemma</a>
+                    <a href="#mehrwert-hr" class="block px-3 py-3 text-gray-700 font-medium hover:bg-gray-50 rounded-lg">Mehrwert für HR</a>
+                    <a href="#support-wege" class="block px-3 py-3 text-gray-700 font-medium hover:bg-gray-50 rounded-lg">Mitarbeiter-Support</a>
+                    <a href="#inkubator-konzept" class="block px-3 py-3 text-gray-700 font-medium hover:bg-gray-50 rounded-lg">Das Konzept</a>
+                    <a href="#coaches" class="block px-3 py-3 text-gray-700 font-medium hover:bg-gray-50 rounded-lg">Experten</a>
+                    <a href="#b2b-modelle" class="block px-3 py-3 text-gray-700 font-medium hover:bg-gray-50 rounded-lg">Unternehmenspakete</a>
+                    <a href="#kontakt" class="block mt-4 text-center bg-brand text-white px-6 py-3 rounded-xl font-medium shadow-md">Kontakt</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-navy-900 text-white">
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-brand/20 blur-3xl opacity-50 pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 rounded-full bg-blue-500/20 blur-3xl opacity-50 pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-sm font-medium mb-8">
+                    <i class="fas fa-sliders-h text-brand"></i>
+                    <span>Neue Horizonte für Ihre Mitarbeitenden</span>
                 </div>
                 
-                <!-- Desktop Menu -->
-                <div class="hidden lg:flex space-x-6 items-center text-sm">
-                    <a href="#arbeitgeber" class="text-gray-600 hover:text-brand font-medium transition-colors">Für Arbeitgeber (B2B)</a>
-                    <a href="#mitarbeiter" class="text-gray-600 hover:text-brand font-medium transition-colors">Für Abgefundene</a>
-                    <a href="#programm" class="text-gray-600 hover:text-brand font-medium transition-colors">Curriculum</a>
-                    <a href="#pakete" class="text-gray-600 hover:text-brand font-medium transition-colors">Pakete</a>
-                    <a href="#team" class="text-gray-600 hover:text-brand font-medium transition-colors">Gründer</a>
-                    <a href="#kontakt" class="bg-navy-900 text-white px-5 py-2.5 rounded-full font-medium hover:bg-navy-800 transition-all transform hover:-translate-y-0.5 shadow-lg shadow-navy-900/20">
-                        Strategiegespräch buchen
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-heading font-bold leading-tight mb-8">
+                    Über die Selbständigkeit<br/>
+                    <span class="text-brand">zurück in den Arbeitsmarkt.</span>
+                </h1>
+                
+                <p class="text-lg sm:text-xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+                    In einem herausfordernden wirtschaftlichen Umfeld stößt die klassische Vermittlung in Festanstellungen vermehrt an Grenzen. Wir begleiten Ihre Fach- und Führungskräfte in der Neu-Orientierung dabei über Selbstständigkeit, projektbasierte Zusammenarbeit und befristete Beratungsprojekte zurück in die Anstellung zu gelangen.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#kontakt" class="bg-brand text-navy-900 font-bold px-8 py-4 rounded-xl hover:bg-brand-light transition-colors shadow-lg shadow-brand/20">
+                        <i class="fas fa-calendar-alt mr-2"></i>Gespräch vereinbaren
+                    </a>
+                    <a href="#inkubator-konzept" class="bg-white/10 text-white border border-white/20 font-semibold px-8 py-4 rounded-xl hover:bg-white/20 transition-colors">
+                        NextChapter Programme
                     </a>
                 </div>
-
-                <!-- Mobile Menu Button -->
-                <div class="lg:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-navy-900 focus:outline-none">
-                        <i class="fas fa-bars text-2xl"></i>
-                    </button>
-                </div>
             </div>
-        </div>
-        
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl">
-            <div class="px-4 pt-2 pb-6 space-y-2">
-                <a href="#arbeitgeber" class="block px-3 py-3 text-gray-700 font-medium hover:bg-gray-50 rounded-lg">Für Arbeitgeber</a>
-                <a href="#mitarbeiter" class="block px-3 py-3 text-gray-700 font-medium hover:bg-gray-50 rounded-lg">Für Mitarbeiter</a>
-                <a href="#programm" class="block px-3 py-3 text-gray-700 font-medium hover:bg-gray-50 rounded-lg">Das Programm</a>
-                <a href="#pakete" class="block px-3 py-3 text-gray-700 font-medium hover:bg-gray-50 rounded-lg">Pakete & Preise</a>
-                <a href="#kontakt" class="block mt-4 text-center bg-brand text-white px-6 py-3 rounded-xl font-medium shadow-md">Kontakt</a>
-            </div>
-        </div>
-    </nav>
+        </section>
 
-    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-navy-900 text-white">
-        <!-- Abstract Background Shapes -->
-        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-brand/20 blur-3xl opacity-50 pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 rounded-full bg-blue-500/20 blur-3xl opacity-50 pointer-events-none"></div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-sm font-medium mb-8 glass-panel">
-                <i class="fas fa-rocket text-brand"></i>
-                <span>Outplacement 2.0 – Vom Konzern in die Selbstständigkeit</span>
-            </div>
-            
-            <h1 class="text-4xl sm:text-5xl lg:text-7xl font-heading font-bold leading-tight mb-8">
-                Der smarte Weg nach der <br/>
-                <span class="gradient-text">Abfindung.</span>
-            </h1>
-            
-            <p class="text-lg sm:text-xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-                Wir sind die Brücke zwischen einer fairen Trennung im Unternehmen und einem erfolgreichen Neustart als Freelancer. Begleitung, Bürokratie-Übernahme und Platzierung am Markt – aus einer Hand.
-            </p>
-            
-        </div>
-    </section>
-
-    <section id="arbeitgeber" class="py-24 bg-white relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <div>
-                    <span class="text-brand font-bold tracking-wider uppercase text-sm mb-2 block">B2B LÖSUNG FÜR HR</span>
-                    <h2 class="text-3xl md:text-4xl font-heading font-bold text-navy-900 mb-6">Trennen Sie sich fair, innovativ und ohne Imageschaden.</h2>
-                    <p class="text-lg text-gray-600 mb-8">
-                        Klassisches Outplacement vermittelt oft nur von einer Festanstellung in die nächste. Doch viele Ihrer ausscheidenden Mitarbeiter träumen von Freiheit und Selbstständigkeit – ihnen fehlt nur das Know-how. 
-                    </p>
-                    <ul class="space-y-5">
-                        <li class="flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center text-brand-dark shrink-0 mt-1">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-navy-900 text-lg">Trennungs-Kosten senken</h4>
-                                <p class="text-gray-600">Ein attraktives Gründungs-Paket als Teil der Abfindung erhöht die Akzeptanz von Aufhebungsverträgen enorm.</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center text-brand-dark shrink-0 mt-1">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-navy-900 text-lg">Employer Branding schützen</h4>
-                                <p class="text-gray-600">Ehemalige Mitarbeiter, die als erfolgreiche Freelancer starten, werden zu den besten Markenbotschaftern Ihres Unternehmens.</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center text-brand-dark shrink-0 mt-1">
-                                <i class="fas fa-hands-helping"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-navy-900 text-lg">Absolute HR-Entlastung</h4>
-                                <p class="text-gray-600">Wir übernehmen die komplette Betreuung – vom Lebenslauf-Check bis zur finalen Anmeldung bei Hays und Co.</p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <div class="relative">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-brand to-navy-500 rounded-3xl transform rotate-3 opacity-10 blur-xl"></div>
-                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="HR Meeting" class="relative rounded-3xl shadow-2xl border border-gray-100">
-                    
-                    <div class="absolute -bottom-8 -left-8 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 hidden md:block">
-                        <div class="text-sm text-gray-500 font-medium mb-1">Outplacement-Erfolgsquote</div>
-                        <div class="text-3xl font-bold text-navy-900 flex items-baseline gap-1">
-                            94% <span class="text-brand text-xl"><i class="fas fa-arrow-up"></i></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="mitarbeiter" class="py-24 bg-navy-50 border-y border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-brand font-bold tracking-wider uppercase text-sm mb-2 block">FÜR ABGEFUNDENE</span>
-                <h2 class="text-3xl md:text-4xl font-heading font-bold text-navy-900 mb-6">Abfindung kassiert. Und jetzt?</h2>
-                <p class="text-xl text-gray-600">
-                    Nutze dein Startkapital für deine Freiheit. Wir nehmen dir die Angst vor der Bürokratie und zeigen dir die Abkürzung in die Selbstständigkeit.
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
-                <!-- Bad Way -->
-                <div class="bg-white border border-red-100 rounded-3xl p-8 lg:p-10 relative overflow-hidden group hover:shadow-lg transition-all">
-                    <div class="absolute top-0 right-0 bg-red-500 text-white p-3 rounded-bl-3xl">
-                        <i class="fas fa-times text-xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-red-900 mb-6">Das Risiko (Alleingang)</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-minus-circle text-red-400 mt-1"></i>
-                            <span class="text-gray-700">Du nimmst die Abfindung und verbrennst sie in den ersten Monaten für private Lebenshaltungskosten.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-minus-circle text-red-400 mt-1"></i>
-                            <span class="text-gray-700">Du tappst in teure Steuer-Fallen (z.B. falsche Anwendung der Fünftelregelung) bei der Gründung.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-minus-circle text-red-400 mt-1"></i>
-                            <span class="text-gray-700">Du klickst dich planlos durch Projektportale und verkaufst dich unter Wert, weil dein Konzern-Lebenslauf nicht funktioniert.</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Smart Way -->
-                <div class="bg-brand/10 border border-brand/20 rounded-3xl p-8 lg:p-10 relative overflow-hidden group hover:shadow-xl transition-all shadow-brand/5">
-                    <div class="absolute top-0 right-0 bg-brand text-white p-3 rounded-bl-3xl">
-                        <i class="fas fa-check text-xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-navy-900 mb-6">Der smarte Weg (Mit NextChapter)</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check-circle text-brand mt-1"></i>
-                            <span class="text-gray-700">Wir übernehmen das komplette Setup. Von der Rechtsform bis zur Berufshaftpflicht – wir checken das für dich.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check-circle text-brand mt-1"></i>
-                            <span class="text-gray-700">Dein Arbeitgeber zahlt das Programm über das Outplacement-Budget. Dein Startkapital bleibt unangetastet.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check-circle text-brand mt-1"></i>
-                            <span class="text-gray-700"><strong>Das Wichtigste:</strong> Wir melden dich bei allen relevanten Vermittlern (Hays, freelancermap, etc.) an und platzieren dich aktiv!</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="programm" class="py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-brand font-bold tracking-wider uppercase text-sm mb-2 block">Das Curriculum</span>
-                <h2 class="text-3xl md:text-4xl font-heading font-bold text-navy-900 mb-4">Das Masterclass-Programm</h2>
-                <p class="text-xl text-gray-600">Alles, was du wissen musst, komprimiert auf das Wesentliche. Keine Theorie, nur Praxis.</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Modul 1 -->
-                <div class="bg-white border border-gray-100 shadow-lg shadow-gray-200/50 rounded-2xl p-8 hover:-translate-y-1 transition-transform">
-                    <div class="w-12 h-12 bg-navy-50 text-navy-900 rounded-xl flex items-center justify-center font-bold text-xl mb-6">01</div>
-                    <h3 class="text-xl font-bold text-navy-900 mb-3">Mindset & Gründungsformen</h3>
-                    <p class="text-gray-600 text-sm">Freiberufler vs. Gewerbe, GmbH vs. UG. Macht eine Holding-Struktur für dich Sinn? Wir klären das Basis-Setup.</p>
-                </div>
-                
-                <!-- Modul 2 -->
-                <div class="bg-white border border-gray-100 shadow-lg shadow-gray-200/50 rounded-2xl p-8 hover:-translate-y-1 transition-transform">
-                    <div class="w-12 h-12 bg-navy-50 text-navy-900 rounded-xl flex items-center justify-center font-bold text-xl mb-6">02</div>
-                    <h3 class="text-xl font-bold text-navy-900 mb-3">Das Steuer- & Finanz-Playbook</h3>
-                    <p class="text-gray-600 text-sm">Wie du deine Abfindung clever nutzt (Fünftelregelung), legale Steuersparmodelle anwendest und dein Geschäftskonto in der Vorgründungsphase aufbaust.</p>
-                </div>
-
-                <!-- Modul 3 -->
-                <div class="bg-white border border-gray-100 shadow-lg shadow-gray-200/50 rounded-2xl p-8 hover:-translate-y-1 transition-transform">
-                    <div class="w-12 h-12 bg-navy-50 text-navy-900 rounded-xl flex items-center justify-center font-bold text-xl mb-6">03</div>
-                    <h3 class="text-xl font-bold text-navy-900 mb-3">Absicherung & Risk Management</h3>
-                    <p class="text-gray-600 text-sm">Die ungeschminkte Wahrheit über Versicherungen. Warum dich 60 €/Monat für eine Berufshaftpflicht retten, und die Wahl zwischen PKW vs. GKV.</p>
-                </div>
-
-                <!-- Modul 4 -->
-                <div class="bg-white border border-gray-100 shadow-lg shadow-gray-200/50 rounded-2xl p-8 hover:-translate-y-1 transition-transform">
-                    <div class="w-12 h-12 bg-navy-50 text-navy-900 rounded-xl flex items-center justify-center font-bold text-xl mb-6">04</div>
-                    <h3 class="text-xl font-bold text-navy-900 mb-3">Das Vermittler-Einmaleins</h3>
-                    <p class="text-gray-600 text-sm">Wie Hays, Gulp & Co wirklich ticken. ANÜ vs. Contracting, das Konzept von "Open Book" vs. Marge, und wie man Zahlungsziele knallhart verhandelt.</p>
-                </div>
-
-                <!-- Modul 5 -->
-                <div class="bg-white border border-gray-100 shadow-lg shadow-gray-200/50 rounded-2xl p-8 hover:-translate-y-1 transition-transform lg:col-span-2">
-                    <div class="w-12 h-12 bg-brand/20 text-brand-dark rounded-xl flex items-center justify-center font-bold text-xl mb-6">05</div>
-                    <h3 class="text-xl font-bold text-navy-900 mb-3">Eigenvermarktung & Proactive Sales</h3>
-                    <p class="text-gray-600 text-sm">Wie vermarkte ich mich? Der "2-Minuten-Anruf-Trick" bei Projektnummern, LinkedIn-Optimierung für Freelancer und die Frage, ob du eine eigene Website brauchst. Wir bauen mit dir ein skill-basiertes Profil auf, das bei Vermittlern durch den Algorithmus rutscht.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="pakete" class="py-24 bg-navy-900 text-white relative">
-        <div class="absolute inset-0 opacity-5 dot-pattern-bg"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl md:text-4xl font-heading font-bold mb-4">Das 3-Stufen-Modell</h2>
-                <p class="text-xl text-gray-300">Buchbar als Firmen-Outplacement-Paket oder als privates Upsell für Abgefundene.</p>
-            </div>
-
-            <div class="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <!-- Basic -->
-                <div class="bg-white/5 border border-white/10 rounded-3xl p-8 pricing-card transition-all">
-                    <h3 class="text-2xl font-bold mb-2">Basic</h3>
-                    <p class="text-gray-400 text-sm mb-6 h-10">Self-Service & Erstorientierung für kleine Budgets.</p>
-                    <div class="border-t border-white/10 pt-6 space-y-4 mb-8">
-                        <div class="flex items-start gap-3 text-sm">
-                            <i class="fas fa-check text-brand mt-1"></i>
-                            <span>10-12 Video-Module (Basics)</span>
-                        </div>
-                        <div class="flex items-start gap-3 text-sm">
-                            <i class="fas fa-check text-brand mt-1"></i>
-                            <span>Standard Templates (Verträge, Anträge)</span>
-                        </div>
-                        <div class="flex items-start gap-3 text-sm">
-                            <i class="fas fa-check text-brand mt-1"></i>
-                            <span>Standard Karriere-Test</span>
-                        </div>
-                        <div class="flex items-start gap-3 text-sm text-gray-500">
-                            <i class="fas fa-minus mt-1"></i>
-                            <span>Kein Live-Coaching</span>
-                        </div>
-                        <div class="flex items-start gap-3 text-sm text-gray-500">
-                            <i class="fas fa-minus mt-1"></i>
-                            <span>Anmeldung bei Portalen in Eigenregie</span>
-                        </div>
-                    </div>
-                    <button class="w-full py-3 rounded-xl border border-white/20 hover:bg-white/10 transition-colors font-medium">Anfragen</button>
-                </div>
-
-                <!-- Pro -->
-                <div class="bg-gradient-to-b from-brand to-brand-dark rounded-3xl p-8 pricing-card transition-all relative transform md:-translate-y-4 shadow-2xl shadow-brand/20">
-                    <div class="absolute top-0 right-0 bg-white text-navy-900 text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-3xl uppercase tracking-wider">
-                        Der Standard
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2 text-white">Pro</h3>
-                    <p class="text-green-100 text-sm mb-6 h-10">Die Masterclass für den erfolgreichen Start.</p>
-                    <div class="border-t border-white/20 pt-6 space-y-4 mb-8">
-                        <div class="flex items-start gap-3 text-sm text-white">
-                            <i class="fas fa-check text-white mt-1"></i>
-                            <span>Voller Plattform-Zugriff + Deep Dives</span>
-                        </div>
-                        <div class="flex items-start gap-3 text-sm text-white">
-                            <i class="fas fa-check text-white mt-1"></i>
-                            <span>Premium Templates & Lebenslauf-Checker</span>
-                        </div>
-                        <div class="flex items-start gap-3 text-sm text-white">
-                            <i class="fas fa-check text-white mt-1"></i>
-                            <span>Ausführliche Karriere- & ROI-Analyse</span>
-                        </div>
-                        <div class="flex items-start gap-3 text-sm text-white">
-                            <i class="fas fa-check text-white mt-1"></i>
-                            <span>Q&A Gruppen-Calls</span>
-                        </div>
-                        <div class="flex items-start gap-3 text-sm text-white">
-                            <i class="fas fa-check text-white mt-1"></i>
-                            <span>Exklusive Checkliste für Vermittler</span>
-                        </div>
-                    </div>
-                    <button class="w-full py-3 rounded-xl bg-white text-navy-900 font-bold hover:bg-gray-50 transition-colors shadow-lg">Paket wählen</button>
-                </div>
-
-                <!-- VIP -->
-                <div class="bg-white/5 border border-white/10 rounded-3xl p-8 pricing-card transition-all relative overflow-hidden">
-                    <div class="absolute -right-12 top-6 bg-yellow-500 text-navy-900 text-xs font-bold px-12 py-1 rotate-45">
-                        DONE FOR YOU
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2 text-yellow-500">VIP Executive</h3>
-                    <p class="text-gray-400 text-sm mb-6 h-10">Maximaler Komfort. Wir erledigen die Arbeit.</p>
-                    <div class="border-t border-white/10 pt-6 space-y-4 mb-8">
-                        <div class="flex items-start gap-3 text-sm">
-                            <i class="fas fa-check text-yellow-500 mt-1"></i>
-                            <span>Lifetime Zugriff auf alle Inhalte</span>
-                        </div>
-                        <div class="flex items-start gap-3 text-sm">
-                            <i class="fas fa-check text-yellow-500 mt-1"></i>
-                            <span>Individuell angepasste Verträge</span>
-                        </div>
-                        <div class="flex items-start gap-3 text-sm">
-                            <i class="fas fa-check text-yellow-500 mt-1"></i>
-                            <span><strong>Persönliche 1-on-1 Strategie-Session</strong></span>
-                        </div>
-                        <div class="flex items-start gap-3 text-sm">
-                            <i class="fas fa-check text-yellow-500 mt-1"></i>
-                            <span class="font-bold text-white">Rundum-Sorglos-Anmeldung:</span>
-                        </div>
-                        <p class="text-xs text-gray-400 pl-7">Wir registrieren dich aktiv & professionell bei freelancermap, freelance.de, Hays und weiteren Top-Vermittlern.</p>
-                    </div>
-                    <button class="w-full py-3 rounded-xl border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-navy-900 transition-colors font-medium">VIP anfragen</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="kalkulator" class="py-24 bg-gray-50 relative overflow-hidden border-b border-gray-200">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="text-center mb-12">
-                <span class="text-brand font-semibold tracking-wider uppercase text-sm mb-2 block">Interaktives Tool</span>
-                <h2 class="text-3xl md:text-4xl font-heading font-bold text-navy-900 mb-4">Der Tagessatz-Kalkulator</h2>
-                <p class="text-xl text-gray-600">Schluss mit Arbeitnehmer-Denken. Finde heraus, welchen Tagessatz du als Freelancer wirklich verlangen musst, um dein bisheriges Konzern-Gehalt zu matchen (inkl. Urlaub, Leerlauf & Versicherungen).</p>
-            </div>
-
-            <div class="bg-white rounded-3xl p-8 lg:p-12 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] text-navy-900 border border-gray-100">
-                <div class="grid md:grid-cols-2 gap-12 items-center">
-                    
-                    <!-- Input Area -->
-                    <div class="space-y-8">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Bisheriges Brutto-Jahresgehalt (€)</label>
-                            <input type="range" id="salaryRange" min="50000" max="200000" step="5000" value="85000" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand">
-                            <div class="flex justify-between mt-2 text-sm text-gray-500 font-medium">
-                                <span>50k €</span>
-                                <span id="salaryDisplay" class="text-brand-dark font-bold text-lg">85.000 €</span>
-                                <span>200k+ €</span>
-                            </div>
-                        </div>
-
-                        <div class="space-y-4">
-                            <p class="text-sm font-bold text-gray-700">Was bei Freelancern oft vergessen wird:</p>
-                            <ul class="text-sm text-gray-600 space-y-2">
-                                <li><i class="fas fa-exclamation-circle text-orange-500 mr-2 w-4"></i> Kein bezahlter Urlaub (30 Tage Ausfall)</li>
-                                <li><i class="fas fa-exclamation-circle text-orange-500 mr-2 w-4"></i> Keine Lohnfortzahlung im Krankheitsfall</li>
-                                <li><i class="fas fa-exclamation-circle text-orange-500 mr-2 w-4"></i> 100% Arbeitgeberanteil KV/PV & Rente</li>
-                                <li><i class="fas fa-exclamation-circle text-orange-500 mr-2 w-4"></i> Akquise-Zeiten (nicht abrechenbar)</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Result Area -->
-                    <div class="bg-navy-900 rounded-2xl p-8 border border-navy-800 text-center relative overflow-hidden text-white shadow-inner">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-brand/20 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-                        <p class="text-gray-400 font-semibold mb-2 uppercase tracking-wide text-sm">Dein minimaler Ziel-Tagessatz</p>
-                        <div class="text-5xl font-heading font-bold text-white mb-2">
-                            <span id="rateResult">850</span> €
-                        </div>
-                        <p class="text-sm text-gray-400 mb-6">Pro Projekttag (netto, zzgl. MwSt.)</p>
+        <!-- Positionierung & Markt-Dilemma -->
+        <section id="warum-selbstaendigkeit" class="py-24 bg-white relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <span class="text-brand font-bold tracking-wider uppercase text-sm mb-2 block">MARKT-DILEMMA & POSITIONIERUNG</span>
+                        <h2 class="text-3xl md:text-4xl font-heading font-bold text-navy-900 mb-6">Die Ergänzung zu klassischem Outplacement.</h2>
+                        <p class="text-lg text-gray-600 mb-6 leading-relaxed">
+                            Klassische Outplacement-Dienstleister leisten hervorragende Arbeit bei der Re-Integration von Mitarbeitenden in den Festanstellungsmarkt. Doch die makroökonomische Realität zeigt: Die Anzahl offener Stellen in Deutschland geht branchenübergreifend – insbesondere in Schlüsselindustrien – stark zurück.
+                        </p>
+                        <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                            Wo klassische Vermittlungsbemühungen mangels offener Vakanzen ins Leere zu laufen drohen, schaffen wir neue Perspektiven. Viele Ihrer Spezialisten tragen unschätzbares Know-how in sich, das der Markt dringend benötigt – jedoch flexibel, projektbasiert und freiberuflich.
+                        </p>
                         
-                        <div class="bg-white/10 p-4 rounded-xl border border-white/10 text-sm text-left backdrop-blur-sm">
-                            <strong>Insider-Tipp:</strong> Im VIP-Paket bauen wir dein Profil so auf, dass genau dieser Satz bei Portalen wie Hays oder freelancermap für dich durchsetzbar wird.
+                        <div class="p-6 bg-navy-50 rounded-2xl border-l-4 border-brand text-navy-900 font-medium">
+                            "Wir ergänzen klassische Outplacement-Maßnahmen: um Mitarbeitenden im schrumpfenden Arbeitsmarkt über die Selbständigkeit in die Festanstellung zu bringen. Dazu helfen wir ausscheidenden Angestellten zu gefragten Experten von morgen zu werden."
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-brand to-navy-500 rounded-3xl transform rotate-3 opacity-10 blur-xl"></div>
+                        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Strategisches HR-Meeting" class="relative rounded-3xl shadow-2xl border border-gray-100">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Strategischer Mehrwert für HR -->
+        <section id="mehrwert-hr" class="py-24 bg-navy-50 border-y border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="text-brand font-bold tracking-wider uppercase text-sm mb-2 block">MEHRWERT FÜR DAS UNTERNEHMEN</span>
+                    <h2 class="text-3xl md:text-4xl font-heading font-bold text-navy-900 mb-6">Souveräner & sozialverträglicher Trennungsprozess</h2>
+                    <p class="text-xl text-gray-600">
+                        Sichern Sie Ihren Trennungsprozess ab, entlasten Sie Ihre HR-Ressourcen und schützen Sie Ihre Arbeitgebermarke.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Vorteil 1 -->
+                    <div class="bg-white border border-gray-100 rounded-3xl p-8 hover:shadow-lg transition-all">
+                        <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand-dark mb-6 text-xl">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-navy-900 mb-4">Entlastung bei Sozialplanverhandlungen</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Ein dediziertes, professionelles Gründer- und Begleitprogramm ist ein extrem starkes Argument bei Verhandlungen mit dem Betriebsrat. Sie bieten eine echte, zukunftssichere Perspektive abseits des engen Arbeitsmarktes.
+                        </p>
+                    </div>
+
+                    <!-- Vorteil 2 -->
+                    <div class="bg-white border border-gray-100 rounded-3xl p-8 hover:shadow-lg transition-all">
+                        <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand-dark mb-6 text-xl">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-navy-900 mb-4">Schutz des Employer Brandings</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Mitarbeitende, die den Sprung in eine erfolgreiche Selbstständigkeit schaffen, verlassen Ihr Unternehmen wertschätzend und im Guten. Das minimiert das Risiko von Klagewellen und schützt Ihren Ruf am Markt.
+                        </p>
+                    </div>
+
+                    <!-- Vorteil 3 -->
+                    <div class="bg-white border border-gray-100 rounded-3xl p-8 hover:shadow-lg transition-all">
+                        <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand-dark mb-6 text-xl">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-navy-900 mb-4">Wissenstransfer im Ökosystem</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Transformieren Sie internes Wissen in flexible Ressourcen. Ehemalige Leistungsträger bleiben Ihrem Branchen-Ökosystem, Zuliefererkreis oder Partnernetzwerk als externe Interim-Experten und Dienstleister erhalten.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Support bei neuen Wegen -->
+        <section id="support-wege" class="py-24 bg-white relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-12 gap-12 items-center">
+                    <!-- Linke Spalte: Intro -->
+                    <div class="lg:col-span-5">
+                        <span class="text-brand font-bold tracking-wider uppercase text-sm mb-2 block">SUPPORT BEI NEUEN WEGEN</span>
+                        <h2 class="text-3xl md:text-4xl font-heading font-bold text-navy-900 mb-6">Neue Wege erfordern neue Expertise</h2>
+                        <p class="text-xl font-medium text-gray-700 mb-6 leading-relaxed">
+                            Wir unterstützen Arbeitssuchende bei ihren ersten Schritten in der Selbständigkeit – vom Lebenslauf bis zum Gesprächstraining.
+                        </p>
+                        <p class="text-gray-600 leading-relaxed mb-8">
+                            Das über Jahre erworbene Fachwissen Ihrer Mitarbeitenden ist von unschätzbarem Wert. Wir sorgen dafür, dass diese Expertise nahtlos und rechtssicher auf den freiberuflichen Markt übertragen wird. Dabei fangen wir ganz vorne an und begleiten sie Schritt für Schritt durch alle operativen und strategischen Hürden.
+                        </p>
+                    </div>
+
+                    <!-- Rechte Spalte: Die 4 Säulen des Mitarbeiter-Supports -->
+                    <div class="lg:col-span-7 grid sm:grid-cols-2 gap-6">
+                        <!-- Baustein 1 -->
+                        <div class="p-6 bg-navy-50 rounded-2xl border border-gray-100 shadow-sm">
+                            <div class="w-10 h-10 rounded-xl bg-brand text-white flex items-center justify-center mb-4 shadow-md shadow-brand/10">
+                                <i class="fas fa-file-invoice"></i>
+                            </div>
+                            <h4 class="font-bold text-navy-900 text-lg mb-2">Profil- & Lebenslauf-Optimierung</h4>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Klassische Bewerbungsunterlagen funktionieren auf dem freiberuflichen Markt nicht. Wir transformieren klassische CVs in skillbasierte Experten-Profile für Projektportale.
+                            </p>
+                        </div>
+
+                        <!-- Baustein 2 -->
+                        <div class="p-6 bg-navy-50 rounded-2xl border border-gray-100 shadow-sm">
+                            <div class="w-10 h-10 rounded-xl bg-brand text-white flex items-center justify-center mb-4 shadow-md shadow-brand/10">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h4 class="font-bold text-navy-900 text-lg mb-2">Verhandlungs- & Gesprächstraining</h4>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Vom Angestellten zum Verhandlungspartner: Wir bereiten die Teilnehmenden intensiv auf Verhandlungsgespräche mit B2B-Kunden und großen Projektvermittlern vor.
+                            </p>
+                        </div>
+
+                        <!-- Baustein 3 -->
+                        <div class="p-6 bg-navy-50 rounded-2xl border border-gray-100 shadow-sm">
+                            <div class="w-10 h-10 rounded-xl bg-brand text-white flex items-center justify-center mb-4 shadow-md shadow-brand/10">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <h4 class="font-bold text-navy-900 text-lg mb-2">Absicherung & Krankenkassen</h4>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Der Wechsel des Sozialversicherungssystems verunsichert viele. Wir bringen Klarheit in die Wahl zwischen gesetzlicher und privater Krankenversicherung (GKV vs. PKV).
+                            </p>
+                        </div>
+
+                        <!-- Baustein 4 -->
+                        <div class="p-6 bg-navy-50 rounded-2xl border border-gray-100 shadow-sm">
+                            <div class="w-10 h-10 rounded-xl bg-brand text-white flex items-center justify-center mb-4 shadow-md shadow-brand/10">
+                                <i class="fas fa-piggy-bank"></i>
+                            </div>
+                            <h4 class="font-bold text-navy-900 text-lg mb-2">Vorsorge & Altersstrukturen</h4>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Wir klären verlässlich über die Rentenversicherungspflicht für bestimmte freie Berufe auf und zeigen nachhaltige Modelle zur privaten und betrieblichen Altersvorsorge im eigenen Business.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Das Inkubator-Konzept als interaktive Zeitleiste -->
+        <section id="inkubator-konzept" class="py-24 bg-navy-50 border-y border-gray-200 overflow-hidden">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-20">
+                    <span class="text-brand font-bold tracking-wider uppercase text-sm mb-2 block">PROGRAMM-ROADMAP</span>
+                    <h2 class="text-3xl md:text-4xl font-heading font-bold text-navy-900 mb-4">Der Weg zum Projekterfolg</h2>
+                    <p class="text-xl text-gray-600">Ein glasklares, modulares System, das betroffene Fachkräfte nahtlos von der Freistellung bis zum ersten Projekt führt.</p>
+                </div>
+
+                <!-- Vertikale Timeline Verbindungslinie -->
+                <div class="relative border-l-2 border-gray-200 ml-4 md:ml-40 space-y-12">
+                    
+                    <!-- Modul 1 -->
+                    <div class="timeline-item relative pl-8 md:pl-16">
+                        <div class="absolute -left-[17px] top-1 bg-white border-4 border-navy-500 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs text-navy-900 shadow-sm z-10">01</div>
+                        <div class="hidden md:block absolute -left-40 top-2 w-32 text-right">
+                            <span class="text-xs font-bold text-navy-500 uppercase tracking-wider">01 . VORBEREITUNG</span>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm max-w-3xl hover:shadow-md transition-shadow">
+                            <h3 class="text-lg md:text-xl font-bold text-navy-900 mb-3">Vorlagen & Guidelines</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">Wir stellen praxiserprobte Dokumente und Leitfäden zur Verfügung, die speziell darauf ausgerichtet sind, für die Selbstständigkeit und projektbasierte Tätigkeit das perfekte Setup aufzusetzen. So gelingt der fehlerfreie Schnellstart in den Markt.</p>
+                        </div>
+                    </div>
+
+                    <!-- Modul 2 -->
+                    <div class="timeline-item relative pl-8 md:pl-16">
+                        <div class="absolute -left-[17px] top-1 bg-white border-4 border-navy-500 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs text-navy-900 shadow-sm z-10">02</div>
+                        <div class="hidden md:block absolute -left-40 top-2 w-32 text-right">
+                            <span class="text-xs font-bold text-navy-500 uppercase tracking-wider">02 . TRAINING</span>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm max-w-3xl hover:shadow-md transition-shadow">
+                            <h3 class="text-lg md:text-xl font-bold text-navy-900 mb-3">Self-Guided Learning</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">In kurzen, prägnanten Erklärvideos vermitteln wir den Teilnehmenden alle relevanten strategischen und bürokratischen Themen für den perfekten Start – vom Tag der Freistellung bis zum ersten erfolgreichen Projektantritt.</p>
+                        </div>
+                    </div>
+
+                    <!-- Modul 3 -->
+                    <div class="timeline-item relative pl-8 md:pl-16">
+                        <div class="absolute -left-[17px] top-1 bg-white border-4 border-navy-500 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs text-navy-900 shadow-sm z-10">03</div>
+                        <div class="hidden md:block absolute -left-40 top-2 w-32 text-right">
+                            <span class="text-xs font-bold text-navy-500 uppercase tracking-wider">03 . INTERAKTION</span>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm max-w-3xl hover:shadow-md transition-shadow">
+                            <h3 class="text-lg md:text-xl font-bold text-navy-900 mb-3">Wöchentliche Q&A Calls</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">In regelmäßigen Gruppen-Live-Calls kann sich jeder Teilnehmer unkompliziert mit seinen individuellen Fragen an das NextChapter-Team wenden. Wir räumen Unsicherheiten aus dem Weg und geben direktes Feedback.</p>
+                        </div>
+                    </div>
+
+                    <!-- Modul 4 -->
+                    <div class="timeline-item relative pl-8 md:pl-16">
+                        <div class="absolute -left-[17px] top-1 bg-white border-4 border-navy-500 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs text-navy-900 shadow-sm z-10">04</div>
+                        <div class="hidden md:block absolute -left-40 top-2 w-32 text-right">
+                            <span class="text-xs font-bold text-navy-500 uppercase tracking-wider">04 . DEEP DIVE</span>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm max-w-3xl hover:shadow-md transition-shadow">
+                            <h3 class="text-lg md:text-xl font-bold text-navy-900 mb-3">Individuelle 1:1 Coachings</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">In intensiven Eins-zu-Eins-Sessions erhalten die Teilnehmenden eine maßgeschneiderte Betreuung. Hier lösen wir hochspezifische, persönliche oder komplexe Fachfragen mit enger, individueller Unterstützung.</p>
+                        </div>
+                    </div>
+
+                    <!-- Modul 5 -->
+                    <div class="timeline-item relative pl-8 md:pl-16">
+                        <div class="absolute -left-[17px] top-1 bg-white border-4 border-navy-500 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs text-navy-900 shadow-sm z-10">05</div>
+                        <div class="hidden md:block absolute -left-40 top-2 w-32 text-right">
+                            <span class="text-xs font-bold text-navy-500 uppercase tracking-wider">05 . GO-TO-MARKET</span>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm max-w-3xl hover:shadow-md transition-shadow">
+                            <h3 class="text-lg md:text-xl font-bold text-navy-900 mb-3">Rundum-Anmeldeservice</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">Wir übernehmen die Arbeit: Wir registrieren und platzieren die Teilnehmer aktiv bei den relevantesten Projektplattformen und Personalvermittlern im deutschsprachigen Raum, um die Sichtbarkeit für passende B2B-Projekte zu maximieren.</p>
+                        </div>
+                    </div>
+
+                    <!-- Modul 6 -->
+                    <div class="timeline-item relative pl-8 md:pl-16">
+                        <div class="absolute -left-[17px] top-1 bg-white border-4 border-navy-500 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs text-navy-900 shadow-sm z-10">06</div>
+                        <div class="hidden md:block absolute -left-40 top-2 w-32 text-right">
+                            <span class="text-xs font-bold text-navy-500 uppercase tracking-wider">06 . EXPERTISE</span>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm max-w-3xl hover:shadow-md transition-shadow">
+                            <h3 class="text-lg md:text-xl font-bold text-navy-900 mb-3">Fokus Expertensessions</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">Unsere spezialisierten Partner und Branchencoaches bieten komprimierte, 30 bis 45-minütige Informationssessions zu essenziellen Fachthemen wie Steuern, B2B-Bewerbungsgesprächen und dem realen Freelancer-Alltag.</p>
                         </div>
                     </div>
 
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="team" class="py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-navy-50 rounded-3xl overflow-hidden border border-gray-100">
-                <div class="grid md:grid-cols-2">
-                    <div class="h-80 md:h-auto relative bg-navy-900">
-                        <!-- Abstract placeholders for founders -->
-                        <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Alexander Winter und Marcel Schrader" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-80">
-                        <div class="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/40 to-transparent flex flex-col justify-end p-8 md:p-12">
-                            <h3 class="text-2xl font-bold text-white mb-1">Alexander Winter & Marcel Schrader</h3>
-                            <p class="text-brand font-medium">Gründer von NextChapter</p>
+        <!-- Unsere Coaches & Experten (Full Bleed Layout) -->
+        <section id="coaches" class="py-24 bg-white select-none overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="text-brand font-bold tracking-wider uppercase text-sm mb-2 block">UNSERE EXPERTEN & COACHES</span>
+                    <h2 class="text-3xl md:text-4xl font-heading font-bold text-navy-900 mb-4">Fachspezifische Vorträge & Impluse</h2>
+                    <p class="text-xl text-gray-600">Im Rahmen unserer Expertensessions erhalten die Teilnehmer wertfolle Praxis-Insights & -Tipps und können Fragen stellen.</p>
+                </div>
+
+                <!-- Full-Bleed Container: Bricht aus dem Standard-Padding aus bis zum Fensterrand -->
+                <div class="relative w-screen left-1/2 -translate-x-1/2">
+                    <div class="expert-scroll-container overflow-x-auto pb-8 flex gap-6 snap-x snap-mandatory px-4 sm:px-6 lg:px-[calc((100vw-80rem)/2+2rem)]">
+                        
+                        <!-- Coach 1 -->
+                        <div class="bg-navy-50 rounded-2xl overflow-hidden border border-gray-100 p-5 flex flex-col text-center items-center shadow-sm hover:shadow-md transition-shadow min-w-[280px] sm:min-w-[250px] snap-start">
+                            <img src="assets/lena.jpeg" alt="Lena Göritz" class="w-32 h-32 rounded-xl object-cover mb-4 shadow-sm border border-gray-200">
+                            <h3 class="font-heading font-bold text-navy-900 text-base mb-1">Lena Göritz</h3>
+                            <p class="text-brand text-xs font-semibold uppercase tracking-wider mb-3">Mindset Coaching</p>
+                            <p class="text-gray-600 text-xs leading-relaxed max-w-[220px]">Souveräner Umgang mit Unsicherheiten, Ängsten und den mentalen Herausforderungen des Neustarts.</p>
+                        </div>
+
+                        <!-- Coach 2 -->
+                        <div class="bg-navy-50 rounded-2xl overflow-hidden border border-gray-100 p-5 flex flex-col text-center items-center shadow-sm hover:shadow-md transition-shadow min-w-[280px] sm:min-w-[250px] snap-start">
+                            <img src="assets/delir.jpeg" alt="Delir Goorab" class="w-32 h-32 rounded-xl object-cover mb-4 shadow-sm border border-gray-200">
+                            <h3 class="font-heading font-bold text-navy-900 text-base mb-1">Delir Goorab</h3>
+                            <p class="text-brand text-xs font-semibold uppercase tracking-wider mb-3">Personalvermittlung</p>
+                            <p class="text-gray-600 text-xs leading-relaxed max-w-[220px]">Perfektionierung des skillbasierten Lebenslaufs, Optimierung des Bewerbungsprozesses und gezieltes Gesprächstraining.</p>
+                        </div>
+
+                        <!-- Coach 3 -->
+                        <div class="bg-navy-50 rounded-2xl overflow-hidden border border-gray-100 p-5 flex flex-col text-center items-center shadow-sm hover:shadow-md transition-shadow min-w-[280px] sm:min-w-[250px] snap-start">
+                            <img src="assets/max.jpeg" alt="Max Hoffmann" class="w-32 h-32 rounded-xl object-cover mb-4 shadow-sm border border-gray-200">
+                            <h3 class="font-heading font-bold text-navy-900 text-base mb-1">Max Hoffmann</h3>
+                            <p class="text-brand text-xs font-semibold uppercase tracking-wider mb-3">Steuer & Finanzen</p>
+                            <p class="text-gray-600 text-xs leading-relaxed max-w-[220px]">Klarheit bei der Wahl der passenden Unternehmensform, Steuerstrukturierung und Absicherung im Alter.</p>
+                        </div>
+
+                        <!-- Coach 4 -->
+                        <div class="bg-navy-50 rounded-2xl overflow-hidden border border-gray-100 p-5 flex flex-col text-center items-center shadow-sm hover:shadow-md transition-shadow min-w-[280px] sm:min-w-[250px] snap-start">
+                            <img src="assets/hendrik.jpeg" alt="Hendrik Wilmanns" class="w-32 h-32 rounded-xl object-cover mb-4 shadow-sm border border-gray-200">
+                            <h3 class="font-heading font-bold text-navy-900 text-base mb-1">Hendrik Wilmanns</h3>
+                            <p class="text-brand text-xs font-semibold uppercase tracking-wider mb-3">Selbständigkeit</p>
+                            <p class="text-gray-600 text-xs leading-relaxed max-w-[220px]">Praxisnahe B2B-Projektakquise, Aufbau des eigenen Kundennetzwerks und wichtige Markt-Watch-outs.</p>
+                        </div>
+
+                        <!-- Coach 5 -->
+                        <div class="bg-navy-50 rounded-2xl overflow-hidden border border-gray-100 p-5 flex flex-col text-center items-center shadow-sm hover:shadow-md transition-shadow min-w-[280px] sm:min-w-[250px] snap-start">
+                            <img src="assets/jan.jpeg" alt="Jan Runge" class="w-32 h-32 rounded-xl object-cover mb-4 shadow-sm border border-gray-200">
+                            <h3 class="font-heading font-bold text-navy-900 text-base mb-1">Jan Runge</h3>
+                            <p class="text-brand text-xs font-semibold uppercase tracking-wider mb-3">Global B2B</p>
+                            <p class="text-gray-600 text-xs leading-relaxed max-w-[220px]">Strategisches Networking, grenzüberschreitende Kooperationen und internationale Projektakquise.</p>
+                        </div>
+
+                        <!-- Coach 6 -->
+                        <div class="bg-navy-50 rounded-2xl overflow-hidden border border-gray-100 p-5 flex flex-col text-center items-center shadow-sm hover:shadow-md transition-shadow min-w-[280px] sm:min-w-[250px] snap-start">
+                            <img src="assets/christiane.jpeg" alt="Christiane Grüger" class="w-32 h-32 rounded-xl object-cover mb-4 shadow-sm border border-gray-200">
+                            <h3 class="font-heading font-bold text-navy-900 text-base mb-1">Christiane Grüger</h3>
+                            <p class="text-brand text-xs font-semibold uppercase tracking-wider mb-3">Feste Freie</p>
+                            <p class="text-gray-600 text-xs leading-relaxed max-w-[220px]">Modelle, Verträge und strategische Positionierung auf dem Weg zum festen freien Mitarbeiter.</p>
+                        </div>
+
+                        <!-- Coach 7 -->
+                        <div class="bg-navy-50 rounded-2xl overflow-hidden border border-gray-100 p-5 flex flex-col text-center items-center shadow-sm hover:shadow-md transition-shadow min-w-[280px] sm:min-w-[250px] snap-start">
+                            <img src="assets/egon.jpeg" alt="Egon Winter" class="w-32 h-32 rounded-xl object-cover mb-4 shadow-sm border border-gray-200">
+                            <h3 class="font-heading font-bold text-navy-900 text-base mb-1">Egon Winter</h3>
+                            <p class="text-brand text-xs font-semibold uppercase tracking-wider mb-3">Agenturen</p>
+                            <p class="text-gray-600 text-xs leading-relaxed max-w-[220px]">Gezielte Projektakquise im Agenturbereich, Dienstleister-Strukturen und B2B-Schnittstellen.</p>
+                        </div>
+
+                        <!-- Coach 8 -->
+                        <div class="bg-navy-50 rounded-2xl overflow-hidden border border-gray-100 p-5 flex flex-col text-center items-center shadow-sm hover:shadow-md transition-shadow min-w-[280px] sm:min-w-[250px] snap-start">
+                            <img src="assets/cornelia.jpeg" alt="Cornelia Dick" class="w-32 h-32 rounded-xl object-cover mb-4 shadow-sm border border-gray-200">
+                            <h3 class="font-heading font-bold text-navy-900 text-base mb-1">Cornelia Dick</h3>
+                            <p class="text-brand text-xs font-semibold uppercase tracking-wider mb-3">Förderprogramme</p>
+                            <p class="text-gray-600 text-xs leading-relaxed max-w-[220px]">Identifikation und erfolgreiche Beantragung staatlicher Fördertöpfe und finanzieller Zuschüsse.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- B2B Unternehmenspakete (Gleichfarbiges Design ohne Badges & Buttons) -->
+        <section id="b2b-modelle" class="py-24 bg-navy-900 text-white relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="text-brand font-bold tracking-wider uppercase text-sm mb-2 block">PAKETE</span>
+                    <h2 class="text-3xl md:text-4xl font-heading font-bold mb-4">Passende Pakete für jeden Bedarf</h2>
+                    <p class="text-xl text-gray-300">Wählen Sie je nach Bedürfnis Ihrer Mitarbeitenden das passende Paket. Wir übernehmen die komplette Betreuung & Abwicklung für Sie.</p>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <!-- Basic -->
+                    <div class="bg-white/5 border border-white/10 rounded-3xl p-8 transition-all hover:border-white/20">
+                        <h3 class="text-2xl font-bold mb-2">Corporate Basic</h3>
+                        <p class="text-gray-400 text-sm mb-6 h-10">Digitale Erstorientierung bei großen Restrukturierungsmaßnahmen.</p>
+                        <div class="border-t border-white/10 pt-6 space-y-4">
+                            <div class="flex items-start gap-3 text-sm">
+                                <i class="fas fa-check text-brand mt-1"></i>
+                                <span>Vollständiger Zugriff auf alle Video-Module</span>
+                            </div>
+                            <div class="flex items-start gap-3 text-sm">
+                                <i class="fas fa-check text-brand mt-1"></i>
+                                <span>Standard-Templates (Verträge, Anträge, Checklisten)</span>
+                            </div>
+                            <div class="flex items-start gap-3 text-sm">
+                                <i class="fas fa-check text-brand mt-1"></i>
+                                <span>Eignungs- und Orientierungstests</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="p-8 lg:p-12 flex flex-col justify-center bg-white">
-                        <h2 class="text-3xl font-heading font-bold text-navy-900 mb-6">Von Foundern, nicht von Verwaltern.</h2>
-                        <div class="prose text-gray-600 mb-8 space-y-4">
-                            <p>Wir standen genau da, wo deine ausscheidenden Mitarbeiter jetzt stehen: Wir kommen aus dem Konzern, haben die Abfindung genommen und den Sprung gewagt.</p>
-                            <p>Mit zusammen <strong>14 Jahren Erfahrung in der Selbstständigkeit</strong> haben wir uns monatelang durch den Dschungel aus ANÜ, Contracting, Stundensatzkalkulationen und Steuer-Fallen gekämpft.</p>
-                            <p>Aus diesem Schmerz ist NextChapter entstanden. Wir vermitteln kein Google-Halbwissen, sondern Insider-Wissen. Wir wissen, wie man sich positionieren muss, wie man Margen ("Open Book") verhandelt und wie man in die geschlossenen Pools der Vermittler kommt.</p>
+
+                    <!-- Pro -->
+                    <div class="bg-white/5 border border-white/10 rounded-3xl p-8 transition-all hover:border-white/20 relative">
+                        <h3 class="text-2xl font-bold mb-2 text-white">Corporate Pro</h3>
+                        <p class="text-gray-400 text-sm mb-6 h-10">Die intensive Gruppen-Begleitung für Fachkräfte im Transfer.</p>
+                        <div class="border-t border-white/10 pt-6 space-y-4">
+                            <div class="flex items-start gap-3 text-sm text-white">
+                                <i class="fas fa-check text-brand mt-1"></i>
+                                <span>Alle Inhalte der digitalen Plattform + Deep Dives</span>
+                            </div>
+                            <div class="flex items-start gap-3 text-sm text-white">
+                                <i class="fas fa-check text-brand mt-1"></i>
+                                <span>Interaktiver Lebenslauf- & Profil-Checker</span>
+                            </div>
+                            <div class="flex items-start gap-3 text-sm text-white">
+                                <i class="fas fa-check text-brand mt-1"></i>
+                                <span>Regelmäßige Live Q&A Gruppen-Coachings</span>
+                            </div>
+                            <div class="flex items-start gap-3 text-sm text-white">
+                                <i class="fas fa-check text-brand mt-1"></i>
+                                <span>Exklusive Vermittler-Checkliste für den schnellen Start</span>
+                            </div>
                         </div>
-                        <div class="flex flex-wrap gap-3">
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-navy-50 text-navy-800 text-sm font-bold border border-navy-100">
-                                <i class="fas fa-history text-brand"></i> 14 Jahre Praxis
-                            </span>
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-navy-50 text-navy-800 text-sm font-bold border border-navy-100">
-                                <i class="fas fa-building text-brand"></i> Ex-Konzern
-                            </span>
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-navy-50 text-navy-800 text-sm font-bold border border-navy-100">
-                                <i class="fas fa-network-wired text-brand"></i> Top-Netzwerk
-                            </span>
+                    </div>
+
+                    <!-- Ultra (Zuvor VIP Executive) -->
+                    <div class="bg-white/5 border border-white/10 rounded-3xl p-8 transition-all hover:border-white/20 relative overflow-hidden">
+                        <h3 class="text-2xl font-bold mb-2 text-white">Corporate Ultra</h3>
+                        <p class="text-gray-400 text-sm mb-6 h-10">Premium 1:1-Betreuung für anspruchsvolle Fach- & Führungskräfte.</p>
+                        <div class="border-t border-white/10 pt-6 space-y-4">
+                            <div class="flex items-start gap-3 text-sm">
+                                <i class="fas fa-check text-brand mt-1"></i>
+                                <span>Persönliche, strategische 1-on-1 Begleitung</span>
+                            </div>
+                            <div class="flex items-start gap-3 text-sm">
+                                <i class="fas fa-check text-brand mt-1"></i>
+                                <span>Individuelle Vertrags- und Positionierungsprüfung</span>
+                            </div>
+                            <div class="flex items-start gap-3 text-sm">
+                                <i class="fas fa-check text-brand mt-1"></i>
+                                <span class="font-bold text-white">Rundum-Sorglos-Anmeldung:</span>
+                            </div>
+                            <p class="text-xs text-gray-400 pl-7">Wir übernehmen die aktive Registrierung und algorithmusoptimierte Platzierung bei Hays, Freelancermap, Gulp und weiteren Top-Dienstleistern.</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="kontakt" class="py-24 relative overflow-hidden bg-gradient-to-br from-navy-900 to-navy-800">
-        <!-- Background Pattern -->
-        <div class="absolute inset-0 opacity-5 grid-pattern-bg"></div>
-        
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <h2 class="text-4xl md:text-5xl font-heading font-bold text-white mb-6">Lassen Sie uns über Outplacement 2.0 sprechen.</h2>
-            <p class="text-xl text-gray-300 mb-10">Egal ob Sie als HR-Entscheider nach einer innovativen Lösung suchen oder als Mitarbeiter Ihre Abfindung optimal nutzen wollen.</p>
+        <!-- Über uns / Expertise -->
+        <section id="expertise" class="py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-navy-50 rounded-3xl overflow-hidden border border-gray-100">
+                    <div class="grid md:grid-cols-2">
+                        <div class="h-80 md:h-auto relative bg-navy-900">
+                            <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Alexander Winter und Marcel Schrader" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-80">
+                            <div class="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/40 to-transparent flex flex-col justify-end p-8 md:p-12">
+                                <h3 class="text-2xl font-bold text-white mb-1">Alexander Winter & Marcel Schrader</h3>
+                                <p class="text-brand font-medium">Gründer von NextChapter</p>
+                            </div>
+                        </div>
+                        <div class="p-8 lg:p-12 flex flex-col justify-center bg-white">
+                            <h2 class="text-3xl font-heading font-bold text-navy-900 mb-6">Von Gründern entwickelt. Für die Praxis gebaut.</h2>
+                            <div class="prose text-gray-600 mb-8 space-y-4">
+                                <p>Wir verwalten keine Statistiken und vermitteln kein Google-Halbwissen. Wir kommen selbst aus der Konzernwelt, haben den Prozess der fairen Trennung durchlaufen und den Schritt gewagt.</p>
+                                <p>Mit zusammen <strong>14 Jahren fundierter Praxiserfahrung in der B2B-Selbstständigkeit</strong> kennen wir jede Hürde im Contracting-Markt, verhandeln Margen-Strukturen blind und wissen exakt, wie Profile aufgebaut sein müssen, um bei großen Vermittlern sofort angefragt zu werden.</p>
+                                <p>Wir sind der verlässliche Partner an der Seite Ihrer HR-Abteilung, um Ihren ausscheidenden Talenten ein erstklassiges, zukunftssicheres Fundament mitzugeben.</p>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-navy-50 text-navy-800 text-sm font-bold border border-navy-100">
+                                    <i class="fas fa-business-time text-brand"></i> 14 Jahre Praxis
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-navy-50 text-navy-800 text-sm font-bold border border-navy-100">
+                                    <i class="fas fa-building text-brand"></i> Konzern-DNA
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-navy-50 text-navy-800 text-sm font-bold border border-navy-100">
+                                    <i class="fas fa-network-wired text-brand"></i> B2B-Netzwerk
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- B2B Call-to-Action -->
+        <section id="kontakt" class="py-24 relative overflow-hidden bg-gradient-to-br from-navy-900 to-navy-800">
+            <div class="absolute inset-0 opacity-5 grid-pattern-bg"></div>
             
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="mailto:hr@nextchapter.de" class="bg-brand text-navy-900 font-bold text-lg px-8 py-4 rounded-xl hover:bg-brand-light transition-colors shadow-lg">
-                    <i class="fas fa-calendar-check mr-2"></i> Strategie-Call buchen
-                </a>
-                <a href="#pakete" class="bg-white/10 text-white border border-white/20 font-bold text-lg px-8 py-4 rounded-xl hover:bg-white/20 transition-colors">
-                    Pakete ansehen
-                </a>
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <h2 class="text-4xl md:text-5xl font-heading font-bold text-white mb-6">Erweitern Sie Ihr Trennungsmanagement zukunftssicher.</h2>
+                <p class="text-xl text-gray-300 mb-10">Planen Sie eine Restrukturierungsmaßnahme oder möchten Sie Ihren Sozialplan um eine zeitgemäße, innovative und hochgradig sozialverträgliche Komponente ergänzen? Lassen Sie uns sprechen.</p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="mailto:hr@nextchapter.de" class="bg-brand text-navy-900 font-bold text-lg px-8 py-4 rounded-xl hover:bg-brand-light transition-colors shadow-lg">
+                        <i class="fas fa-calendar-check mr-2"></i> HR-Strategiegespräch buchen
+                    </a>
+                    <a href="#b2b-modelle" class="bg-white/10 text-white border border-white/20 font-bold text-lg px-8 py-4 rounded-xl hover:bg-white/20 transition-colors">
+                        Modelle einsehen
+                    </a>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <footer class="bg-navy-950 text-gray-400 py-12 border-t border-white/5 bg-[#050d1a]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center text-white font-bold text-sm">
-                        N
+        <!-- Footer -->
+        <footer class="bg-navy-950 text-gray-400 py-12 border-t border-white/5 bg-[#050d1a]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center text-white font-bold text-sm">
+                            N
+                        </div>
+                        <span class="font-heading font-bold text-xl text-white tracking-tight">NextChapter</span>
                     </div>
-                    <span class="font-heading font-bold text-xl text-white tracking-tight">NextChapter</span>
-                </div>
-                
-                <div class="flex gap-6 text-sm">
-                    <a href="#" class="hover:text-brand transition-colors">Impressum</a>
-                    <a href="#" class="hover:text-brand transition-colors">Datenschutz</a>
-                    <a href="#" class="hover:text-brand transition-colors">AGB</a>
-                </div>
-                
-                <div class="text-sm">
-                    &copy; 2026 NextChapter. Alexander Winter & Marcel Schrader.
+                    
+                    <div class="flex gap-6 text-sm">
+                        <a href="#" class="hover:text-brand transition-colors">Impressum</a>
+                        <a href="#" class="hover:text-brand transition-colors">Datenschutz</a>
+                        <a href="#" class="hover:text-brand transition-colors">B2B-AGB</a>
+                    </div>
+                    
+                    <div class="text-sm">
+                        &copy; 2026 NextChapter. Alexander Winter & Marcel Schrader. All rights reserved.
+                    </div>
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
 
+    </div>
+
+    <!-- JavaScript für Menü, Navbar, Scroll-Animationen und Passwort-Check -->
     <script>
+        // Passwortprüfung
+        function checkPassword() {
+            const input = document.getElementById('password-input').value;
+            const errorElement = document.getElementById('password-error');
+            const overlay = document.getElementById('password-overlay');
+            const content = document.getElementById('page-content');
+
+            if (input === "NL2026!!") {
+                // Bei Erfolg: Animation des Entfernens, Freigabe der Pointer-Events & Löschen des Overlays
+                overlay.classList.add('opacity-0', 'pointer-events-none', 'transition-opacity', 'duration-500');
+                content.classList.remove('blur-md', 'pointer-events-none', 'select-none');
+                
+                setTimeout(() => {
+                    overlay.remove();
+                }, 500);
+            } else {
+                // Bei Fehler Fehlermeldung einblenden
+                errorElement.classList.remove('hidden');
+                document.getElementById('password-input').value = "";
+            }
+        }
+
+        // Eventlistener für Enter-Taste im Passwortfeld
+        document.getElementById('password-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
         // Mobile Menu Toggle
         const mobileBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -517,41 +684,29 @@
             }
         });
 
-        // Rate Calculator Logic
-        const salaryRange = document.getElementById('salaryRange');
-        const salaryDisplay = document.getElementById('salaryDisplay');
-        const rateResult = document.getElementById('rateResult');
-
-        function calculateRate() {
-            const salary = parseInt(salaryRange.value);
+        // Scroll-Animation für die Timeline-Items mit Intersection Observer
+        document.addEventListener('DOMContentLoaded', () => {
+            const timelineItems = document.querySelectorAll('.timeline-item');
             
-            // Format Salary
-            salaryDisplay.textContent = new Intl.NumberFormat('de-DE').format(salary) + ' €';
-
-            // Calculation formula for IT/Consulting Freelancers in GER
-            // (Gross Salary / 100) * 1.05 -> rough realistic daily rate to match net income 
-            // including private health care, pension, unbillable days, vacation.
-            let dailyRate = Math.round((salary / 100) * 1.05); 
-            
-            animateValue(rateResult, parseInt(rateResult.textContent.replace('.','')), dailyRate, 300);
-        }
-
-        function animateValue(obj, start, end, duration) {
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                obj.innerHTML = new Intl.NumberFormat('de-DE').format(Math.floor(progress * (end - start) + start));
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                }
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -10% 0px',
+                threshold: 0.15
             };
-            window.requestAnimationFrame(step);
-        }
 
-        // Initialize Calculator
-        salaryRange.addEventListener('input', calculateRate);
-        calculateRate();
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            timelineItems.forEach(item => {
+                observer.observe(item);
+            });
+        });
     </script>
 </body>
 </html>
